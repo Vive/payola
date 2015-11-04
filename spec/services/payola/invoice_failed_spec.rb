@@ -3,7 +3,7 @@ require 'spec_helper'
 module Payola
   describe InvoiceFailed do
     let(:stripe_helper) { StripeMock.create_test_helper }
-    it "should create a failed sale" do
+    it 'should create a failed sale' do
       plan = create(:subscription_plan)
 
       customer = Stripe::Customer.create(

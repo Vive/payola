@@ -23,7 +23,7 @@ module Payola
       end
 
       def product_class
-        self.to_s.underscore
+        to_s.underscore
       end
     end
   end

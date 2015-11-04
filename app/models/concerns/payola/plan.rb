@@ -14,7 +14,7 @@ module Payola
 
       before_create :create_stripe_plan, if: -> { Payola.create_stripe_plans }
 
-      has_many :subscriptions, :class_name => "Payola::Subscription"
+      has_many :subscriptions, class_name: 'Payola::Subscription'
 
       Payola.register_subscribable(self)
     end
@@ -41,9 +41,8 @@ module Payola
       end
 
       def plan_class
-        self.to_s.underscore.parameterize
+        to_s.underscore.parameterize
       end
     end
-
   end
 end

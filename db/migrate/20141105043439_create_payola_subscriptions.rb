@@ -16,14 +16,14 @@ class CreatePayolaSubscriptions < ActiveRecord::Migration
       t.timestamp :trial_end
       t.timestamp :canceled_at
       t.integer :quantity
-      t.string   :stripe_id
-      t.string   :stripe_token
-      t.string   :card_last4
-      t.date     :card_expiration
-      t.string   :card_type
-      t.text     :error
-      t.string   :state
-      t.string   :email
+      t.string :stripe_id
+      t.string :stripe_token
+      t.string :card_last4
+      t.date :card_expiration
+      t.string :card_type
+      t.text :error
+      t.string :state
+      t.string :email
 
       t.timestamps
     end

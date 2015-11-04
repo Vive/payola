@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Payola
   describe SyncSubscription do
-    it "should call sync_with!" do
+    it 'should call sync_with!' do
       expect_any_instance_of(Payola::Subscription).to receive(:sync_with!)
       sub = create(:subscription)
 

@@ -6,8 +6,8 @@ module Payola
       @product = create(:product)
     end
 
-    describe "#call" do
-      it "should create a sale" do
+    describe '#call' do
+      it 'should create a sale' do
         sale = CreateSale.call(
           stripeEmail: 'pete@bugsplat.info',
           stripeToken: 'test_tok',
@@ -21,8 +21,8 @@ module Payola
         expect(sale.product_type).to eq 'Product'
         expect(sale.currency).to eq 'usd'
       end
-            
-      it "should include the affiliate if given" do
+
+      it 'should include the affiliate if given' do
         affiliate = create(:payola_affiliate)
         sale = CreateSale.call(
           email: 'pete@bugsplat.info',
@@ -34,8 +34,8 @@ module Payola
         expect(sale.affiliate).to eq affiliate
       end
 
-      describe "with coupon" do
-        it "should include the coupon" do
+      describe 'with coupon' do
+        it 'should include the coupon' do
           coupon = create(:payola_coupon)
 
           sale = CreateSale.call(
@@ -47,7 +47,7 @@ module Payola
 
           expect(sale.coupon).to eq coupon
         end
-        it "should set the price correctly" do
+        it 'should set the price correctly' do
           coupon = create(:payola_coupon)
 
           sale = CreateSale.call(

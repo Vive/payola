@@ -3,14 +3,14 @@ require 'spec_helper'
 module Payola
   describe ChargeCard do
     let(:stripe_helper) { StripeMock.create_test_helper }
-    describe "#call" do
-      it "should create a customer" do
+    describe '#call' do
+      it 'should create a customer' do
         sale = create(:sale, state: 'processing', stripe_token: stripe_helper.generate_card_token)
         ChargeCard.call(sale)
         expect(sale.reload.stripe_customer_id).to_not be_nil
       end
 
-      it "should not create a customer if one already exists" do
+      it 'should not create a customer if one already exists' do
         customer = Stripe::Customer.create
         sale = create(:sale, state: 'processing', stripe_customer_id: customer.id)
         expect(Stripe::Customer).to receive(:retrieve).and_return(customer)
@@ -19,7 +19,7 @@ module Payola
         expect(sale.state).to eq 'finished'
       end
 
-      it "should create a charge" do
+      it 'should create a charge' do
         sale = create(:sale, state: 'processing', stripe_token: stripe_helper.generate_card_token)
         ChargeCard.call(sale)
         expect(sale.reload.stripe_id).to_not be_nil
@@ -29,15 +29,14 @@ module Payola
         expect(sale.reload.description).to_not be_nil
       end
 
-      it "should get the fee from the balance transaction" do
+      it 'should get the fee from the balance transaction' do
         sale = create(:sale, state: 'processing', stripe_token: stripe_helper.generate_card_token)
         ChargeCard.call(sale)
         expect(sale.reload.fee_amount).to_not be_nil
       end
 
-      describe "on error" do
-        it "should update the error attribute" do
-
+      describe 'on error' do
+        it 'should update the error attribute' do
           StripeMock.prepare_card_error(:card_declined)
           sale = create(:sale, state: 'processing', stripe_token: stripe_helper.generate_card_token)
           ChargeCard.call(sale)
@@ -48,4 +47,3 @@ module Payola
     end
   end
 end
-

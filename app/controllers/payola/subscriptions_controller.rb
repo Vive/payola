@@ -4,8 +4,8 @@ module Payola
     include Payola::StatusBehavior
     include Payola::AsyncBehavior
 
-    before_filter :find_plan_coupon_and_quantity, only: [:create, :change_plan]
-    before_filter :check_modify_permissions, only: [:destroy, :change_plan, :change_quantity, :update_card]
+    before_action :find_plan_coupon_and_quantity, only: [:create, :change_plan]
+    before_action :check_modify_permissions, only: [:destroy, :change_plan, :change_quantity, :update_card]
 
     def show
       show_object(Subscription)
@@ -29,7 +29,7 @@ module Payola
       @subscription = Subscription.find_by!(guid: params[:guid])
       Payola::ChangeSubscriptionPlan.call(@subscription, @plan)
 
-      confirm_with_message("Subscription plan updated")
+      confirm_with_message('Subscription plan updated')
     end
 
     def change_quantity
@@ -37,14 +37,14 @@ module Payola
       @subscription = Subscription.find_by!(guid: params[:guid])
       Payola::ChangeSubscriptionQuantity.call(@subscription, @quantity)
 
-      confirm_with_message("Subscription quantity updated")
+      confirm_with_message('Subscription quantity updated')
     end
 
     def update_card
       @subscription = Subscription.find_by!(guid: params[:guid])
       Payola::UpdateCard.call(@subscription, params[:stripeToken])
 
-      confirm_with_message("Card updated")
+      confirm_with_message('Card updated')
     end
 
     private
@@ -58,7 +58,7 @@ module Payola
     def find_plan
       @plan_class = Payola.subscribables[params[:plan_class]]
 
-      raise ActionController::RoutingError.new('Not Found') unless @plan_class && @plan_class.subscribable?
+      fail ActionController::RoutingError.new('Not Found') unless @plan_class && @plan_class.subscribable?
 
       @plan = @plan_class.find_by!(id: params[:plan_id])
     end
@@ -76,8 +76,8 @@ module Payola
       if self.respond_to?(:payola_can_modify_subscription?)
         redirect_to(
           confirm_subscription_path(subscription),
-          alert: "You cannot modify this subscription."
-        ) and return unless self.payola_can_modify_subscription?(subscription)
+          alert: 'You cannot modify this subscription.'
+        ) && return unless self.payola_can_modify_subscription?(subscription)
       end
     end
 
@@ -88,6 +88,5 @@ module Payola
         redirect_to confirm_subscription_path(@subscription), alert: @subscription.errors.full_messages.to_sentence
       end
     end
-
   end
 end

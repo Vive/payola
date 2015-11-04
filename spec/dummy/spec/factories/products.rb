@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :product do
-    name "MyString"
-    permalink "MyString"
+    name 'MyString'
+    permalink 'MyString'
     price 1
   end
 end

@@ -4,7 +4,7 @@ module Payola
   describe ChangeSubscriptionPlan do
     let(:stripe_helper) { StripeMock.create_test_helper }
 
-    describe "#call" do
+    describe '#call' do
       before do
         @plan1 = create(:subscription_plan)
         @plan2 = create(:subscription_plan)
@@ -14,22 +14,22 @@ module Payola
         StartSubscription.call(@subscription)
       end
 
-      context "default" do
+      context 'default' do
         before { Payola::ChangeSubscriptionPlan.call(@subscription, @plan2) }
 
-        it "should change the plan on the stripe subscription" do
+        it 'should change the plan on the stripe subscription' do
           customer = Stripe::Customer.retrieve(@subscription.stripe_customer_id)
           sub = customer.subscriptions.retrieve(@subscription.stripe_id)
 
           expect(sub.plan.id).to eq @plan2.stripe_id
         end
 
-        it "should change the plan on the payola subscription" do
+        it 'should change the plan on the payola subscription' do
           expect(@subscription.reload.plan).to eq @plan2
         end
       end
 
-      context "coupon" do
+      context 'coupon' do
         before do
           @sub = Stripe::Subscription.new
 
@@ -37,30 +37,30 @@ module Payola
           allow(ChangeSubscriptionPlan).to receive(:retrieve_subscription_for_customer).and_return(@sub)
         end
 
-        context "not set" do
+        context 'not set' do
           before do
             Payola::ChangeSubscriptionPlan.call(@subscription, @plan2)
           end
 
-          it "should not have the coupon" do
+          it 'should not have the coupon' do
             expect(@sub.try(:coupon)).to be_nil
           end
         end
 
-        context "set" do
+        context 'set' do
           before do
             @coupon = build :payola_coupon
             Payola::ChangeSubscriptionPlan.call(@subscription, @plan2, @coupon)
           end
 
-          it "should have the coupon" do
+          it 'should have the coupon' do
             expect(@sub.coupon.code).to eq(@coupon.code)
           end
         end
       end
     end
 
-    describe ".should_prorate?" do
+    describe '.should_prorate?' do
       let(:subscription)  { build :subscription }
       let(:plan)          { build :subscription_plan }
       let(:coupon_code)   { nil }
@@ -70,19 +70,19 @@ module Payola
         it { expect(prorate).to eq(true) }
       end
 
-      context "plan.should_prorate? is false" do
+      context 'plan.should_prorate? is false' do
         before { allow(plan).to receive(:should_prorate?).and_return(false) }
 
         it { expect(prorate).to eq(false) }
       end
 
-      context "plan.should_prorate? is true" do
+      context 'plan.should_prorate? is true' do
         before { allow(plan).to receive(:should_prorate?).and_return(true) }
 
         it { expect(prorate).to eq(true) }
       end
 
-      context "plan.should_prorate? is true, coupon overrides" do
+      context 'plan.should_prorate? is true, coupon overrides' do
         let(:coupon_code) { build :payola_coupon }
         before { allow(plan).to receive(:should_prorate?).and_return(true) }
 

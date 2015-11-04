@@ -4,7 +4,7 @@ module Payola
     include Payola::StatusBehavior
     include Payola::AsyncBehavior
 
-    before_filter :find_product_and_coupon, only: [:create]
+    before_action :find_product_and_coupon, only: [:create]
 
     def show
       show_object(Sale)
@@ -19,6 +19,7 @@ module Payola
     end
 
     private
+
     def find_product_and_coupon
       find_product
       find_coupon
@@ -27,7 +28,7 @@ module Payola
     def find_product
       @product_class = Payola.sellables[params[:product_class]]
 
-      raise ActionController::RoutingError.new('Not Found') unless @product_class && @product_class.sellable?
+      fail ActionController::RoutingError.new('Not Found') unless @product_class && @product_class.sellable?
 
       @product = @product_class.find_by!(permalink: params[:permalink])
     end
@@ -42,6 +43,5 @@ module Payola
         @price = @product.price
       end
     end
-
   end
 end

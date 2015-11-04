@@ -26,9 +26,9 @@ module Payola
         Stripe::Customer.retrieve(sale.stripe_customer_id, secret_key)
       else
         Stripe::Customer.create({
-          source: sale.stripe_token,
-          email: sale.email
-        }, secret_key)
+                                  source: sale.stripe_token,
+                                  email: sale.email
+                                }, secret_key)
       end
     end
 
@@ -60,6 +60,5 @@ module Payola
         fee_amount:         fee
       )
     end
-
   end
 end

@@ -22,7 +22,7 @@ module Payola
         mail_params = {
           to: @sale.email,
           from: Payola.support_email,
-          subject: @product.respond_to?(:receipt_subject) ? @product.receipt_subject(@sale) : 'Purchase Receipt',
+          subject: @product.respond_to?(:receipt_subject) ? @product.receipt_subject(@sale) : 'Purchase Receipt'
         }
 
         if @product.respond_to?(:receipt_from_address)
@@ -41,7 +41,7 @@ module Payola
         mail_params = {
           to: @sale.email,
           from: Payola.support_email,
-          subject: @product.respond_to?(:refund_subject) ? @product.refund_subject(@sale) : 'Refund Confirmation',
+          subject: @product.respond_to?(:refund_subject) ? @product.refund_subject(@sale) : 'Refund Confirmation'
         }
 
         if @product.respond_to?(:refund_from_address)
@@ -51,6 +51,5 @@ module Payola
         mail(mail_params)
       end
     end
-
   end
 end

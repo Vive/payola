@@ -3,7 +3,7 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
-require "payola"
+require 'payola'
 
 module Dummy
   class Application < Rails::Application
@@ -21,4 +21,3 @@ module Dummy
     config.i18n.available_locales = [:en, :de]
   end
 end
-

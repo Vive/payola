@@ -1,6 +1,6 @@
 module Payola
   class CreateSubscription
-    def self.call(params, owner=nil)
+    def self.call(params, owner = nil)
       plan = params[:plan]
       affiliate = params[:affiliate]
 
@@ -20,7 +20,7 @@ module Payola
         s.owner = owner
         s.amount = plan.amount
       end
-      
+
       Payola.queue!(Payola::ProcessSubscription, sub.guid) if sub.save
 
       sub

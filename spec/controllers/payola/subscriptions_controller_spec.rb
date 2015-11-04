@@ -10,10 +10,9 @@ module Payola
     end
 
     describe '#create' do
-
       let(:tax_percent) { 20 }
 
-      it "should pass args to CreateSubscription" do
+      it 'should pass args to CreateSubscription' do
         subscription = double
         subscription.should_receive(:save).and_return(true)
         subscription.should_receive(:guid).at_least(1).times.and_return(1)
@@ -42,8 +41,8 @@ module Payola
         expect(parsed_body['guid']).to eq 1
       end
 
-      describe "with an error" do
-        it "should return an error in json" do
+      describe 'with an error' do
+        it 'should return an error in json' do
           subscription = double
           subscription.should_receive(:save).and_return(false)
           error = double
@@ -52,7 +51,6 @@ module Payola
           subscription.should_receive(:state).and_return('errored')
           subscription.should_receive(:error).and_return('')
           subscription.should_receive(:guid).and_return('blah')
-
 
           CreateSubscription.should_receive(:call).and_return(subscription)
           Payola.should_not_receive(:queue!)
@@ -71,7 +69,7 @@ module Payola
         get :status, guid: 'doesnotexist'
         expect(response.status).to eq 404
       end
-      it "should return json with properties" do
+      it 'should return json with properties' do
         subscription = create(:subscription)
         get :status, guid: subscription.guid
 
@@ -88,7 +86,7 @@ module Payola
     describe '#show' do
       it "should redirect to the product's redirect path" do
         plan = create(:subscription_plan)
-        subscription = create(:subscription, :plan => plan)
+        subscription = create(:subscription, plan: plan)
         get :show, guid: subscription.guid
 
         expect(response).to redirect_to '/'
@@ -97,9 +95,9 @@ module Payola
 
     describe '#destroy' do
       before :each do
-        @subscription = create(:subscription, :state => :active)
+        @subscription = create(:subscription, state: :active)
       end
-      it "call Payola::CancelSubscription and redirect" do
+      it 'call Payola::CancelSubscription and redirect' do
         Payola::CancelSubscription.should_receive(:call)
         delete :destroy, guid: @subscription.guid
         # TODO : Figure out why this needs to be a hardcoded path.
@@ -116,7 +114,7 @@ module Payola
         expect(request.flash[:alert]).to eq 'You cannot modify this subscription.'
       end
 
-      it "coerce the at_period_end param to a boolean, and pass it through to Payola::CancelSubscription" do
+      it 'coerce the at_period_end param to a boolean, and pass it through to Payola::CancelSubscription' do
         Payola::CancelSubscription.should_receive(:call).with(instance_of(Payola::Subscription), at_period_end: true)
         delete :destroy, guid: @subscription.guid, at_period_end: 'true'
       end
@@ -128,7 +126,7 @@ module Payola
         @plan = create(:subscription_plan)
       end
 
-      it "should call Payola::ChangeSubscriptionPlan and redirect" do
+      it 'should call Payola::ChangeSubscriptionPlan and redirect' do
         expect(Payola::ChangeSubscriptionPlan).to receive(:call).with(@subscription, @plan)
 
         post :change_plan, guid: @subscription.guid, plan_class: @plan.plan_class, plan_id: @plan.id
@@ -137,7 +135,7 @@ module Payola
         expect(request.flash[:notice]).to eq 'Subscription plan updated'
       end
 
-      it "should show error if Payola::ChangeSubscriptionPlan fails" do
+      it 'should show error if Payola::ChangeSubscriptionPlan fails' do
         StripeMock.prepare_error(Stripe::StripeError.new('There was a problem changing the subscription'))
 
         post :change_plan, guid: @subscription.guid, plan_class: @plan.plan_class, plan_id: @plan.id
@@ -162,7 +160,7 @@ module Payola
         @plan = create(:subscription_plan)
       end
 
-      it "should call Payola::ChangeSubscriptionQuantity and redirect" do
+      it 'should call Payola::ChangeSubscriptionQuantity and redirect' do
         expect(Payola::ChangeSubscriptionQuantity).to receive(:call).with(@subscription, 5)
 
         post :change_quantity, guid: @subscription.guid, quantity: 5
@@ -171,7 +169,7 @@ module Payola
         expect(request.flash[:notice]).to eq 'Subscription quantity updated'
       end
 
-      it "should show error if Payola::ChangeSubscriptionQuantity fails" do
+      it 'should show error if Payola::ChangeSubscriptionQuantity fails' do
         StripeMock.prepare_error(Stripe::StripeError.new('There was a problem changing the subscription quantity'))
 
         post :change_quantity, guid: @subscription.guid, quantity: 5
@@ -190,13 +188,13 @@ module Payola
       end
     end
 
-    describe "#update_card" do
+    describe '#update_card' do
       before :each do
         @subscription = create(:subscription, state: :active)
         @plan = create(:subscription_plan)
       end
 
-      it "should call UpdateCard and redirect" do
+      it 'should call UpdateCard and redirect' do
         expect(Payola::UpdateCard).to receive(:call).with(@subscription, 'tok_1234')
 
         post :update_card, guid: @subscription.guid, stripeToken: 'tok_1234'
@@ -205,7 +203,7 @@ module Payola
         expect(request.flash[:notice]).to eq 'Card updated'
       end
 
-      it "should show error if Payola::UpdateCare fails" do
+      it 'should show error if Payola::UpdateCare fails' do
         StripeMock.prepare_error(Stripe::StripeError.new('There was a problem updating the card'))
 
         post :update_card, guid: @subscription.guid, stripeToken: 'tok_1234'
@@ -214,7 +212,7 @@ module Payola
         expect(request.flash[:alert]).to eq 'There was a problem updating the card'
       end
 
-      it "should redirect with an error" do
+      it 'should redirect with an error' do
         expect(Payola::UpdateCard).to receive(:call).never
         expect_any_instance_of(::ApplicationController).to receive(:payola_can_modify_subscription?).and_return(false)
 
@@ -224,6 +222,5 @@ module Payola
         expect(request.flash[:alert]).to eq 'You cannot modify this subscription.'
       end
     end
-
   end
 end

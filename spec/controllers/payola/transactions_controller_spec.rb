@@ -10,7 +10,7 @@ module Payola
     end
 
     describe '#create' do
-      it "should pass args to CreateSale and queue the job" do
+      it 'should pass args to CreateSale and queue the job' do
         sale = double
         errors = double
         errors.should_receive(:full_messages).and_return([])
@@ -38,8 +38,8 @@ module Payola
         expect(parsed_body['guid']).to eq 'blah'
       end
 
-      describe "with an error" do
-        it "should return an error in json" do
+      describe 'with an error' do
+        it 'should return an error in json' do
           sale = double
           sale.should_receive(:error).and_return(nil)
           sale.should_receive(:save).and_return(false)
@@ -49,7 +49,7 @@ module Payola
           error.should_receive(:full_messages).and_return(['done did broke'])
           sale.should_receive(:errors).and_return(error)
 
-          CreateSale.should_receive(:call).and_return(sale)          
+          CreateSale.should_receive(:call).and_return(sale)
           Payola.should_not_receive(:queue!)
 
           post :create, product_class: @product.product_class, permalink: @product.permalink
@@ -66,7 +66,7 @@ module Payola
         get :status, guid: 'doesnotexist'
         expect(response.status).to eq 404
       end
-      it "should return json with properties" do
+      it 'should return json with properties' do
         sale = create(:sale)
         get :status, guid: sale.guid
 

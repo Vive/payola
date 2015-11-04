@@ -9,26 +9,22 @@ module Payola
       attr_accessor :registry
 
       def find(symbol)
-        if registry.has_key? symbol
+        if registry.key? symbol
           return registry[symbol]
         else
-          raise "No such worker type: #{symbol}"
+          fail "No such worker type: #{symbol}"
         end
       end
 
       def autofind
         # prefer ActiveJob over the other workers
-        if Payola::Worker::ActiveJob.can_run?
-          return Payola::Worker::ActiveJob
-        end
-        
+        return Payola::Worker::ActiveJob if Payola::Worker::ActiveJob.can_run?
+
         registry.values.each do |worker|
-          if worker.can_run?
-            return worker
-          end
+          return worker if worker.can_run?
         end
 
-        raise "No eligible background worker systems found."
+        fail 'No eligible background worker systems found.'
       end
     end
 

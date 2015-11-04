@@ -48,12 +48,10 @@ module Payola
     end
 
     def verify_charge
-      begin
-        self.verify_charge!
-      rescue RuntimeError => e
-        self.error = e.message
-        self.fail!
-      end
+      self.verify_charge!
+    rescue RuntimeError => e
+      self.error = e.message
+      self.fail!
     end
 
     def verify_charge!
@@ -65,11 +63,7 @@ module Payola
     end
 
     def custom_fields
-      if self.signed_custom_fields.present?
-        verifier.verify(self.signed_custom_fields)
-      else
-        nil
-      end
+      verifier.verify(signed_custom_fields) if signed_custom_fields.present?
     end
 
     def charge_description
@@ -106,13 +100,12 @@ module Payola
       product.product_class
     end
 
-    def instrument_key(instrument_type, include_class=true)
+    def instrument_key(instrument_type, include_class = true)
       if include_class
         "payola.#{product_class}.sale.#{instrument_type}"
       else
         "payola.sale.#{instrument_type}"
       end
     end
-
   end
 end

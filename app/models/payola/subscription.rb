@@ -51,16 +51,14 @@ module Payola
       end
     end
 
-    def name
-      self.plan.name
-    end
+    delegate :name, to: :plan
 
     def price
-      self.plan.amount
+      plan.amount
     end
 
-    def redirect_path(sale)
-      self.plan.redirect_path(self)
+    def redirect_path(_sale)
+      plan.redirect_path(self)
     end
 
     def verifier
@@ -68,12 +66,10 @@ module Payola
     end
 
     def verify_charge
-      begin
-        self.verify_charge!
-      rescue RuntimeError => e
-        self.error = e.message
-        self.fail!
-      end
+      self.verify_charge!
+    rescue RuntimeError => e
+      self.error = e.message
+      self.fail!
     end
 
     def verify_charge!
@@ -85,11 +81,7 @@ module Payola
     end
 
     def custom_fields
-      if self.signed_custom_fields.present?
-        verifier.verify(self.signed_custom_fields)
-      else
-        nil
-      end
+      verifier.verify(signed_custom_fields) if signed_custom_fields.present?
     end
 
     def sync_with!(stripe_sub)
@@ -129,8 +121,8 @@ module Payola
 
     def conditional_stripe_token
       return true if plan.nil?
-      if (plan.amount > 0 )
-        if plan.respond_to?(:trial_period_days) and (plan.trial_period_days.nil? or ( plan.trial_period_days and !(plan.trial_period_days > 0) ))
+      if plan.amount > 0
+        if plan.respond_to?(:trial_period_days) && (plan.trial_period_days.nil? || (plan.trial_period_days && !(plan.trial_period_days > 0)))
           errors.add(:base, 'No Stripe token is present for a paid plan') if stripe_token.nil?
         end
       end
@@ -162,13 +154,12 @@ module Payola
       Payola.instrument(instrument_key('refunded', false), self)
     end
 
-    def instrument_key(instrument_type, include_class=true)
+    def instrument_key(instrument_type, include_class = true)
       if include_class
         "payola.#{plan_type}.subscription.#{instrument_type}"
       else
         "payola.subscription.#{instrument_type}"
       end
     end
-
   end
 end

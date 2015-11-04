@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 module Payola
-
   class TestMailer < ActionMailer::Base
     def test_mail(to, text)
       mail(
@@ -11,10 +10,10 @@ module Payola
       )
     end
   end
-  
+
   describe SendMail do
-    describe "#call" do
-      it "should send a mail" do
+    describe '#call' do
+      it 'should send a mail' do
         mail = double
         expect(TestMailer).to receive(:test_mail).with('to@example.com', 'Some Text').and_return(mail)
         expect(mail).to receive(:deliver)

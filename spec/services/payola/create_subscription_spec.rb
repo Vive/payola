@@ -7,8 +7,8 @@ module Payola
       Payola.background_worker = Payola::FakeWorker
     end
 
-    describe "#call" do
-      it "should create a subscription and queue the job" do
+    describe '#call' do
+      it 'should create a subscription and queue the job' do
         expect(Payola).to receive(:queue!)
 
         subscription = CreateSubscription.call(
@@ -26,8 +26,8 @@ module Payola
         expect(subscription.currency).to eq 'usd'
         expect(subscription.tax_percent).to eq 20
       end
-            
-      it "should include the affiliate if given" do
+
+      it 'should include the affiliate if given' do
         affiliate = create(:payola_affiliate)
         subscription = CreateSubscription.call(
           email: 'pete@bugsplat.info',

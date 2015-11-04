@@ -51,10 +51,10 @@ module Payola
           subscription.update_attributes(
             card_last4:          card.last4,
             card_expiration:     Date.new(card.exp_year, card.exp_month, 1),
-            card_type:           card.respond_to?(:brand) ? card.brand : card.type,
+            card_type:           card.respond_to?(:brand) ? card.brand : card.type
           )
         end
-        
+
         subscription.activate!
       rescue Stripe::StripeError, RuntimeError => e
         subscription.update_attributes(error: e.message)
@@ -94,7 +94,7 @@ module Payola
       end
 
       unless subscription.stripe_token.present?
-        raise "stripeToken required for new customer subscription"
+        fail 'stripeToken required for new customer subscription'
       end
 
       customer_create_params = {
@@ -108,15 +108,14 @@ module Payola
         plan = subscription.plan
         description = plan.try(:setup_fee_description, subscription) || 'Setup Fee'
         Stripe::InvoiceItem.create({
-          customer: customer.id,
-          amount: subscription.setup_fee,
-          currency: subscription.currency,
-          description: description
-        }, secret_key)
+                                     customer: customer.id,
+                                     amount: subscription.setup_fee,
+                                     currency: subscription.currency,
+                                     description: description
+                                   }, secret_key)
       end
 
       customer
     end
   end
-
 end

@@ -2,52 +2,50 @@ require 'spec_helper'
 
 module Payola
   describe Subscription do
-
-    describe "validations" do
-      it "should validate" do
+    describe 'validations' do
+      it 'should validate' do
         subscription = build(:subscription)
         expect(subscription.valid?).to be true
       end
 
-      it "should validate plan" do
+      it 'should validate plan' do
         subscription = build(:subscription, plan: nil)
         expect(subscription.valid?).to be false
       end
 
-      it "should validate lack of email" do
+      it 'should validate lack of email' do
         subscription = build(:subscription, email: nil)
         expect(subscription.valid?).to be false
       end
 
-      it "should not validate nil stripe_token on paid plan" do
+      it 'should not validate nil stripe_token on paid plan' do
         plan = create(:subscription_plan)
         subscription = build(:subscription, stripe_token: nil, plan: plan)
         expect(subscription.valid?).to be false
       end
 
-      it "should validate stripe_token" do
+      it 'should validate stripe_token' do
         subscription = build(:subscription, stripe_token: nil)
         expect(subscription.valid?).to be true
       end
-      
-      it "should validate nil stripe_token on free plan" do
+
+      it 'should validate nil stripe_token on free plan' do
         plan = create(:subscription_plan)
         plan.amount = 0
         subscription = build(:subscription, stripe_token: nil, plan: plan)
         expect(subscription.valid?).to be true
       end
 
-      it "should validate nil stripe_token on plan with trial" do
+      it 'should validate nil stripe_token on plan with trial' do
         plan = create(:subscription_plan)
         plan.trial_period_days = 30
         subscription = build(:subscription, stripe_token: nil, plan: plan)
         expect(subscription.valid?).to be true
       end
-
     end
 
-    describe "#sync_with!" do
-      it "should sync timestamps" do
+    describe '#sync_with!' do
+      it 'should sync timestamps' do
         plan = create(:subscription_plan)
         subscription = build(:subscription, plan: plan)
         stripe_sub = Stripe::Customer.create.subscriptions.create(plan: plan.stripe_id, source: StripeMock.generate_card_token(last4: '1234', exp_year: Time.now.year + 1))
@@ -70,7 +68,7 @@ module Payola
         expect(subscription.canceled_at).to eq Time.at(now)
       end
 
-      it "should sync non-timestamp fields" do
+      it 'should sync non-timestamp fields' do
         plan = create(:subscription_plan)
         subscription = build(:subscription, plan: plan)
         stripe_sub = Stripe::Customer.create.subscriptions.create(plan: plan.stripe_id, source: StripeMock.generate_card_token(last4: '1234', exp_year: Time.now.year + 1))

@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 # Declare your gem's dependencies in payola.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
@@ -12,7 +12,7 @@ gemspec
 
 # To use debugger
 # gem 'debugger'
-gem 'simplecov', :require => false, :group => :test
-gem "codeclimate-test-reporter", group: :test, require: nil
+gem 'simplecov', require: false, group: :test
+gem 'codeclimate-test-reporter', group: :test, require: nil
 
 gem 'rspec_junit_formatter'
