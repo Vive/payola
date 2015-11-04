@@ -26,12 +26,13 @@ module Payola
         expect(sale.reload.card_last4).to_not be_nil
         expect(sale.reload.card_expiration).to_not be_nil
         expect(sale.reload.card_type).to_not be_nil
+        expect(sale.reload.description).to_not be_nil
       end
 
       it "should get the fee from the balance transaction" do
         sale = create(:sale, state: 'processing', stripe_token: stripe_helper.generate_card_token)
         ChargeCard.call(sale)
-        expect(sale.reload.fee_amount).to_not be_nil        
+        expect(sale.reload.fee_amount).to_not be_nil
       end
 
       describe "on error" do
