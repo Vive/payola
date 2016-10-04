@@ -27,9 +27,10 @@ module Payola
         }
         create_params[:trial_end] = subscription.trial_end.to_i if subscription.trial_end.present?
         create_params[:coupon] = subscription.coupon if subscription.coupon.present?
-        if should_update_token?
-          create_params[:source] = subscription.stripe_token
-        end
+        #This was getting called if card was on file and erroring in the app because it should use customer stripe id
+        #if should_update_token?
+          #create_params[:source] = subscription.stripe_token
+        #end
         stripe_sub = customer.subscriptions.create(create_params)
 
         subscription.update_attributes(
@@ -82,8 +83,16 @@ module Payola
       nil
     end
 
+    def last_purchase
+      if subscription.owner
+        return Sale.where(owner: subscription.owner)
+          .where("state in ('finished')").last
+      end
+      nil
+    end
+
     def find_or_create_customer
-      sub = first_subscription
+      sub = first_subscription || last_purchase
 
       if sub
         customer_id = sub.stripe_customer_id
