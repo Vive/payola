@@ -86,7 +86,7 @@ module Payola
     def last_purchase
       if subscription.owner
         return Sale.where(owner: subscription.owner)
-          .where("state in ('finished')").last
+          .where("state in ('finished', 'refunded')").last
       end
       nil
     end
